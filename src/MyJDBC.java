@@ -134,7 +134,7 @@ public class MyJDBC {
                 //Delete
                 case 4:
                     delete(tableNameDelete, connection.createStatement(), nameDelete);
-                    System.out.println("Data deleted successfully!");
+                    System.out.println("Data deleted successfully hoorayyy!");
                     break;
 
                 //Add Cart
@@ -150,6 +150,7 @@ public class MyJDBC {
             }
             //asdkfhladskfhjalkdsfjasdfjasdjlfjhkladsfjhkfdashjkladkjhakjldfkj
             //sdafasdfkhjfgakjdsgfkjadhsg
+            //adsfhagsdkfhjgasjdhf
             /*
             operation = 6;
             switch(operation){
