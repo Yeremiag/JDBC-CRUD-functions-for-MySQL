@@ -5,6 +5,7 @@ of the IP and password. Try not to show the IP and password publicly. If you are
 please stop with whatever you do. Thanks.
  */
 
+import java.util.Arrays;
 import java.util.Random;
 import java.sql.*;
 
@@ -51,16 +52,44 @@ public class MyJDBC {
         System.out.println(updatedResult);
     }
 
+    static void addQueue(String tableName, String tableQueue, Statement statement, int idQueue) throws SQLException {
+        String tableSize = "0";
+        ResultSet countTable = statement.executeQuery("SELECT COUNT(Id) FROM " + tableName);
+        if(countTable.next()){
+            tableSize = countTable.getString("COUNT(Id)");
+        }
+        int tableSize_ = Integer.parseInt(tableSize);
+        String[] itemName = new String[tableSize_];
+        String[] itemPrice = new String[tableSize_];
+        String[] itemQuantity = new String[tableSize_];
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+        for(int i = 0;resultSet.next();i++){
+            itemName[i] = resultSet.getString("Name");
+            itemPrice[i] = resultSet.getString("Price");
+            itemQuantity[i] = resultSet.getString("Quantity");
+        }
+        String itemName_ = Arrays.toString(itemName);
+        String itemName2_ = "\"" + itemName_.substring(1,itemName_.length()-1) + "\"";
+        String itemPrice_ = Arrays.toString(itemPrice);
+        String itemPrice2_ = "\"" + itemPrice_.substring(1,itemPrice_.length()-1) + "\"";
+        String itemQuantity_ = Arrays.toString(itemQuantity);
+        String itemQuantity2_ = "\"" + itemQuantity_.substring(1,itemQuantity_.length()-1) + "\"";
+        int updatedResult = statement.executeUpdate("INSERT INTO " + tableQueue + " (Id, Items, Price, Quantity) VALUES (" + idQueue + ", " + itemName2_ + ", " + itemPrice2_ + ", " + itemQuantity2_ + ")");
+        System.out.println(updatedResult);
+    }
+
+
     public static void main(String[] args) {
 
         /*
         Operation Types:
-        Create           = 1
-        Read             = 2
-        Update           = 3
-        Delete           = 4
-        Create cart      = 5
-        Add data to cart = 6
+        Create             = 1
+        Read               = 2
+        Update             = 3
+        Delete             = 4
+        Create cart        = 5
+        Add data to cart   = 6
+        Copy cart to queue = 7
 
         Table Names:
         Drinks      = actdr
@@ -70,7 +99,7 @@ public class MyJDBC {
          */
 
         //Create
-        String tableNameCreate = "actcart2043012437";
+        String tableNameCreate = "actdr";
         int idCreate = 0; // DO NOT change, let it be 0!
         String nameCreate = "\"jus\"";
         int priceCreate = 1000;
@@ -102,6 +131,11 @@ public class MyJDBC {
         int priceCartCreate = 1000;
         int quantityCartCreate = 10;
 
+        //Move cart data to queue table
+        String tableCartQueueName = "actcart2043012437";
+        String tableQueue = "actQueue";
+        int idQueue = 0;
+
         try{
             Connection connection = DriverManager.getConnection(
                     "jdbc:mysql://192.168.1.81:3306/acitya_canteen", // FIX THIS
@@ -111,7 +145,7 @@ public class MyJDBC {
             System.out.println("conntec");
 
             //Type of operation
-            int operation = 1;
+            int operation = 7;
 
             switch(operation){
                 //Create
@@ -143,52 +177,19 @@ public class MyJDBC {
                     System.out.println("Table created successfully!");
                     break;
 
+                //Add data to cart
                 case 6:
                     addCart(cartName, connection.createStatement(), idCartCreate, nameCartCreate, priceCartCreate, quantityCartCreate);
                     System.out.println("Data added to cart successfully!");
                     break;
-            }
-            //asdkfhladskfhjalkdsfjasdfjasdjlfjhkladsfjhkfdashjkladkjhakjldfkj
-            //sdafasdfkhjfgakjdsgfkjadhsg
-            //adsfhagsdkfhjgasjdhf
-            /*
-            operation = 6;
-            switch(operation){
-                //Create
-                case 1:
-                    create(tableNameCreate, connection.createStatement(), idCreate, nameCreate, priceCreate, quantityCreate);
-                    System.out.println("Data created successfully!");
-                    break;
 
-                //Read
-                case 2:
-                    read(tableNameRead,connection.createStatement());
-                    break;
-
-                //Update
-                case 3:
-                    update(tableNameUpdate, connection.createStatement(),nameUpdated, nameUpdate, priceUpdate, quantityUpdate);
-                    System.out.println("Data updated successfully!");
-                    break;
-
-                //Delete
-                case 4:
-                    delete(tableNameDelete, connection.createStatement(), nameDelete);
-                    System.out.println("Data deleted successfully!");
-                    break;
-
-                //Add Cart
-                case 5:
-                    createCart(newTable, connection.createStatement());
-                    System.out.println("Table created successfully!");
-                    break;
-
-                case 6:
-                    addCart(cartName, connection.createStatement(), idCartCreate, nameCartCreate, priceCartCreate, quantityCartCreate);
-                    System.out.println("Data added to cart successfully!");
+                //Add cart data to queue table
+                case 7:
+                    addQueue(tableCartQueueName,tableQueue,connection.createStatement(), idQueue);
+                    System.out.println("Cart data moved to Queue table successfully");
                     break;
             }
-        */
+
         }catch(SQLException e){
             e.printStackTrace();
         }
