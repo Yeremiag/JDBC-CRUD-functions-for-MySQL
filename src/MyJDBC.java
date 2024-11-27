@@ -78,7 +78,6 @@ public class MyJDBC {
         System.out.println(updatedResult);
     }
 
-
     public static void main(String[] args) {
 
         /*
@@ -189,7 +188,6 @@ public class MyJDBC {
                     System.out.println("Cart data moved to Queue table successfully");
                     break;
             }
-
         }catch(SQLException e){
             e.printStackTrace();
         }
