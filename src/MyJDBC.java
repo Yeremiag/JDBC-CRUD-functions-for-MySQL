@@ -52,6 +52,7 @@ public class MyJDBC {
         System.out.println(updatedResult);
     }
 
+    //Add cart data to Queue table
     static void addQueue(String tableName, String tableQueue, Statement statement, int idQueue) throws SQLException {
         String tableSize = "0";
         ResultSet countTable = statement.executeQuery("SELECT COUNT(Id) FROM " + tableName);
