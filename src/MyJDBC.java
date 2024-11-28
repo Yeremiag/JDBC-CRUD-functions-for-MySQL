@@ -27,7 +27,7 @@ public class MyJDBC {
     }
 
     //Read data from table
-    static void read(String tableName, Statement statement) throws SQLException {
+    static void read(String tableName, Statement statement) throws SQLException, IOException {
         ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
         while (resultSet.next()) {
             System.out.println("Id: " + resultSet.getString("Id"));
@@ -35,6 +35,28 @@ public class MyJDBC {
             System.out.println("Price: " + resultSet.getString("Price"));
             System.out.println("Qty: " + resultSet.getString("Quantity"));
             System.out.println("\n");
+        }
+
+        //Read image and download
+        ResultSet rs = statement.executeQuery(
+                "SELECT Image FROM actdr");
+        byte buff[] = new byte[1024];
+
+        for(int i = 1;rs.next();i++){
+            Blob ablob = rs.getBlob(1);
+            File newfile = new File("newimage" + String.valueOf(i) + ".jpg");
+
+            InputStream is = ablob.getBinaryStream();
+
+            FileOutputStream fos =
+                    new FileOutputStream(newfile);
+
+            for (int b = is.read(buff); b != -1; b = is.read(buff)) {
+                fos.write(buff, 0, b);
+            }
+
+            is.close();
+            fos.close();
         }
     }
 
@@ -106,13 +128,14 @@ public class MyJDBC {
         Main Course = actmc
         Snacks      = actsn
         Queue       = actqueue
+        Payment     = actpay
          */
 
         //Create
         String tableNameCreate = "actdr";
         int idCreate = 0; // DO NOT change, let it be 0!
         String nameCreate = "vodka";
-        InputStream imageCreate = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\backgrounddrink (1).png");
+        InputStream imageCreate = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\backgroundsnack.png");
         int priceCreate = 1000;
         int quantityCreate = 100;
 
@@ -156,11 +179,7 @@ public class MyJDBC {
             System.out.println("conntec");
 
             //Type of operation
-            int operation = 1;
-
-            //Statement s = connection.createStatement();
-            //InputStream fin = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\mealbackground.png");
-
+            int operation = 2;
 
             switch(operation){
                 //Create
@@ -206,6 +225,8 @@ public class MyJDBC {
             }
         }catch(SQLException e){
             e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
