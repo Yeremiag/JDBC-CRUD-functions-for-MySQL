@@ -5,15 +5,25 @@ of the IP and password. Try not to show the IP and password publicly. If you are
 please stop with whatever you do. Thanks.
  */
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
 import java.sql.*;
 
 public class MyJDBC {
     //Create data from table
-    static void create(String tableName, Statement statement, int idCreate, String name, int price, int quantity) throws SQLException {
-        int updatedResult = statement.executeUpdate("INSERT INTO " + tableName + " (Id, Name, Price, Quantity) VALUES (" + idCreate + ", " + name + ", " + price + ", " + quantity + ")");
-        System.out.println(updatedResult);
+    static void create(String tableName, Connection connection, int idCreate, InputStream image, String name, int price, int quantity) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(
+                "INSERT INTO " + tableName + " VALUES (?,?,?,?,?)");
+        ps.setInt(1, idCreate);
+        ps.setString(2,name);
+        ps.setBinaryStream(3, image);
+        ps.setInt(4, price);
+        ps.setInt(5, quantity);
+        ps.execute();
+
+        //int updatedResult = statement.executeUpdate("INSERT INTO " + tableName + " (Id, Name, Image, Price, Quantity) VALUES (" + idCreate + ", " + name + ", " + image + ", " + price + ", " + quantity + ")");
+        //System.out.println(updatedResult);
     }
 
     //Read data from table
@@ -79,7 +89,7 @@ public class MyJDBC {
         System.out.println(updatedResult);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
         /*
         Operation Types:
@@ -101,9 +111,10 @@ public class MyJDBC {
         //Create
         String tableNameCreate = "actdr";
         int idCreate = 0; // DO NOT change, let it be 0!
-        String nameCreate = "\"jus\"";
+        String nameCreate = "vodka";
+        InputStream imageCreate = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\backgrounddrink (1).png");
         int priceCreate = 1000;
-        int quantityCreate = 2;
+        int quantityCreate = 100;
 
         //Read
         String tableNameRead = "actdr";
@@ -145,12 +156,16 @@ public class MyJDBC {
             System.out.println("conntec");
 
             //Type of operation
-            int operation = 7;
+            int operation = 1;
+
+            //Statement s = connection.createStatement();
+            //InputStream fin = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\mealbackground.png");
+
 
             switch(operation){
                 //Create
                 case 1:
-                    create(tableNameCreate, connection.createStatement(), idCreate, nameCreate, priceCreate, quantityCreate);
+                    create(tableNameCreate, connection, idCreate, imageCreate, nameCreate, priceCreate, quantityCreate);
                     System.out.println("Data created successfully!");
                     break;
 
