@@ -134,7 +134,7 @@ public class MyJDBC {
             }
 
             String quantity = resultSet.getString("Quantity"); // ---> Get data from Quantity column in string.
-            String[] quantityArray = quantity.split(",");              // ---> Make an array by dividing it when there is a comma.
+            String[] quantityArray = quantity.split(",");           // ---> Make an array by dividing it when there is a comma.
             for (int i = 0; i < quantityArray.length; i++) {              //  ---> Loop through the array to display the data
                 System.out.println("Quantity " + String.valueOf(i) + ": " + quantityArray[i] + ", ");
             }
