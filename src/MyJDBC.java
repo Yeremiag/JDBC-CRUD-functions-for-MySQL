@@ -61,9 +61,13 @@ public class MyJDBC {
     }
 
     //Update data from table
-    static void update(String tableName, Statement statement, String nameUpdated, String nameUpdate, int price, int quantity) throws SQLException {
+    static void update(String tableName, Statement statement, Connection connection, InputStream image, String nameUpdated, String nameUpdate, int price, int quantity) throws SQLException {
         int updatedResult = statement.executeUpdate("UPDATE " + tableName + " SET Name = " + nameUpdated + ", Price = " + price + ", Quantity = " + quantity + " WHERE Name = " + nameUpdate);
         System.out.println(updatedResult);
+
+        PreparedStatement ps = connection.prepareStatement("UPDATE " + tableName + " SET Image = ? where Name = " + nameUpdate);
+        ps.setBlob(1, image);
+        ps.execute();
     }
 
     //Delete data from table
@@ -144,8 +148,9 @@ public class MyJDBC {
 
         //Update
         String tableNameUpdate = "actdr";
-        String nameUpdate = "\"cocacola\""; //Food name that want to be updated
-        String nameUpdated = "\"cocacola\""; //New food name
+        String nameUpdate = "\"cocacola2\""; //Food name that want to be updated
+        String nameUpdated = "\"cocacola2\""; //New food name
+        InputStream imageUpdate = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\backgroundsnack.png");
         int priceUpdate = 20000;
         int quantityUpdate = 50;
 
@@ -156,7 +161,7 @@ public class MyJDBC {
         //Create cart (Make sure to run this only once)
         Random rand = new Random();
         int cartNumber = rand.nextInt(2147483647);
-        String newTable = "actCart" + String.valueOf(cartNumber);
+        String newTable = "acitya" + String.valueOf(cartNumber);
 
         //Add data to cart
         String cartName = newTable;
@@ -172,14 +177,14 @@ public class MyJDBC {
 
         try{
             Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://10.198.67.230:3306/acitya_canteen", // FIX THIS
+                    "jdbc:mysql://192.168.1.81:3306/acitya_canteen", // FIX THIS
                     "root",                                               // FIX THIS
                     "*dbTesting#"                                         // ESPECIALLY THIS
             );
             System.out.println("conntec");
 
             //Type of operation
-            int operation = 2;
+            int operation = 3;
 
             switch(operation){
                 //Create
@@ -195,7 +200,7 @@ public class MyJDBC {
 
                 //Update
                 case 3:
-                    update(tableNameUpdate, connection.createStatement(),nameUpdated, nameUpdate, priceUpdate, quantityUpdate);
+                    update(tableNameUpdate, connection.createStatement(),connection, imageUpdate, nameUpdated, nameUpdate, priceUpdate, quantityUpdate);
                     System.out.println("Data updated successfully!");
                     break;
 
