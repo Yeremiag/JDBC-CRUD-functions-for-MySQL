@@ -172,7 +172,7 @@ public class MyJDBC {
 
         try{
             Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://192.168.1.81:3306/acitya_canteen", // FIX THIS
+                    "jdbc:mysql://10.198.67.230:3306/acitya_canteen", // FIX THIS
                     "root",                                               // FIX THIS
                     "*dbTesting#"                                         // ESPECIALLY THIS
             );
