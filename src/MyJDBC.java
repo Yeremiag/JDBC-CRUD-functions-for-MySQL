@@ -115,6 +115,33 @@ public class MyJDBC {
         System.out.println(updatedResult);
     }
 
+    //Read data from Queue table then convert it to an array of string
+    static void readQueue(String tableName, Statement statement) throws SQLException, IOException {
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+        while (resultSet.next()) {
+            String id = "Id: " + resultSet.getString("Id");
+
+            String items = resultSet.getString("Items"); // ---> Get data from Items column in string.
+            String[] itemsArray = items.split(",");           // ---> Make an array by dividing it when there is a comma.
+            for (int i = 0; i < itemsArray.length; i++) {           //  ---> Loop through the array to display the data
+                System.out.println("Items " + String.valueOf(i) + ": " + itemsArray[i] + ", ");
+            }
+
+            String price = resultSet.getString("Price"); // ---> Get data from Price column in string.
+            String[] priceArray = price.split(",");           // ---> Make an array by dividing it when there is a comma.
+            for (int i = 0; i < priceArray.length; i++) {           //  ---> Loop through the array to display the data
+                System.out.println("Price " + String.valueOf(i) + ": " + priceArray[i] + ", ");
+            }
+
+            String quantity = resultSet.getString("Quantity"); // ---> Get data from Quantity column in string.
+            String[] quantityArray = quantity.split(",");              // ---> Make an array by dividing it when there is a comma.
+            for (int i = 0; i < quantityArray.length; i++) {              //  ---> Loop through the array to display the data
+                System.out.println("Quantity " + String.valueOf(i) + ": " + quantityArray[i] + ", ");
+            }
+            System.out.println("\n");
+        }
+    }
+
     public static void main(String[] args) throws FileNotFoundException {
 
         /*
@@ -126,6 +153,7 @@ public class MyJDBC {
         Create cart        = 5
         Add data to cart   = 6
         Copy cart to queue = 7
+        Read Queue         = 8
 
         Table Names:
         Drinks      = actdr
@@ -175,6 +203,9 @@ public class MyJDBC {
         String tableQueue = "actQueue";
         int idQueue = 0;
 
+        //Read Queue
+        String tableQueueNameRead = "actqueue";
+
         try{
             Connection connection = DriverManager.getConnection(
                     "jdbc:mysql://192.168.1.81:3306/acitya_canteen", // FIX THIS
@@ -184,7 +215,7 @@ public class MyJDBC {
             System.out.println("conntec");
 
             //Type of operation
-            int operation = 3;
+            int operation = 8;
 
             switch(operation){
                 //Create
@@ -226,6 +257,11 @@ public class MyJDBC {
                 case 7:
                     addQueue(tableCartQueueName,tableQueue,connection.createStatement(), idQueue);
                     System.out.println("Cart data moved to Queue table successfully");
+                    break;
+
+                //Read Queue
+                case 8:
+                    readQueue(tableQueueNameRead,connection.createStatement());
                     break;
             }
         }catch(SQLException e){
