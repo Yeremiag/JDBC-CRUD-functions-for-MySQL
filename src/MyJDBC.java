@@ -89,29 +89,49 @@ public class MyJDBC {
     }
 
     //Add cart data to Queue table
-    static void addQueue(String tableName, String tableQueue, Statement statement, int idQueue) throws SQLException {
+    static void addQueue(String tableName, String tableQueue, Statement statement, Connection connection, int idQueue, String userID, InputStream paymentImage) throws SQLException {
         String tableSize = "0";
         ResultSet countTable = statement.executeQuery("SELECT COUNT(Id) FROM " + tableName);
+
         if(countTable.next()){
             tableSize = countTable.getString("COUNT(Id)");
         }
+
         int tableSize_ = Integer.parseInt(tableSize);
         String[] itemName = new String[tableSize_];
         String[] itemPrice = new String[tableSize_];
         String[] itemQuantity = new String[tableSize_];
         ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+
         for(int i = 0;resultSet.next();i++){
             itemName[i] = resultSet.getString("Name");
             itemPrice[i] = resultSet.getString("Price");
             itemQuantity[i] = resultSet.getString("Quantity");
         }
+
         String itemName_ = Arrays.toString(itemName);
-        String itemName2_ = "\"" + itemName_.substring(1,itemName_.length()-1) + "\"";
+        //String itemName2_ = "\"" + itemName_.substring(1,itemName_.length()-1) + "\"";
+        String itemName2_ = itemName_.substring(1,itemName_.length()-1);
         String itemPrice_ = Arrays.toString(itemPrice);
-        String itemPrice2_ = "\"" + itemPrice_.substring(1,itemPrice_.length()-1) + "\"";
+        //String itemPrice2_ = "\"" + itemPrice_.substring(1,itemPrice_.length()-1) + "\"";
+        String itemPrice2_ = itemPrice_.substring(1,itemPrice_.length()-1);
         String itemQuantity_ = Arrays.toString(itemQuantity);
-        String itemQuantity2_ = "\"" + itemQuantity_.substring(1,itemQuantity_.length()-1) + "\"";
-        int updatedResult = statement.executeUpdate("INSERT INTO " + tableQueue + " (Id, Items, Price, Quantity) VALUES (" + idQueue + ", " + itemName2_ + ", " + itemPrice2_ + ", " + itemQuantity2_ + ")");
+        //String itemQuantity2_ = "\"" + itemQuantity_.substring(1,itemQuantity_.length()-1) + "\"";
+        String itemQuantity2_ = itemQuantity_.substring(1,itemQuantity_.length()-1);
+
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO " + tableQueue + " VALUES (?,?,?,?,?,?)");
+        ps.setInt(1, idQueue);
+        ps.setString(2,itemName2_);
+        ps.setString(3,itemPrice2_);
+        ps.setString(4,itemQuantity2_);
+        ps.setString(5,userID);
+        ps.setBinaryStream(6, paymentImage);
+        ps.execute();
+    }
+
+    //Delete cart
+    static void deleteCart(String tableName, Statement statement) throws SQLException {
+        int updatedResult = statement.executeUpdate("DROP TABLE " + tableName);
         System.out.println(updatedResult);
     }
 
@@ -154,13 +174,13 @@ public class MyJDBC {
         Add data to cart   = 6
         Copy cart to queue = 7
         Read Queue         = 8
+        Delete cart        = 9
 
         Table Names:
         Drinks      = actdr
         Main Course = actmc
         Snacks      = actsn
         Queue       = actqueue
-        Payment     = actpay
          */
 
         //Create
@@ -199,12 +219,17 @@ public class MyJDBC {
         int quantityCartCreate = 10;
 
         //Move cart data to queue table
-        String tableCartQueueName = "actcart2043012437";
-        String tableQueue = "actQueue";
+        String tableCartQueueName = "acitya1833964784";
+        String tableQueue = "actqueue";
         int idQueue = 0;
+        String userID = "1833964784"; //String.valueOf(cartNumber);
+        InputStream paymentImage = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\backgroundsnack.png");
 
         //Read Queue
         String tableQueueNameRead = "actqueue";
+
+        //Delete cart
+        String deleteCart = "acitya1833964784";
 
         try{
             Connection connection = DriverManager.getConnection(
@@ -215,7 +240,7 @@ public class MyJDBC {
             System.out.println("conntec");
 
             //Type of operation
-            int operation = 8;
+            int operation = 9;
 
             switch(operation){
                 //Create
@@ -255,13 +280,19 @@ public class MyJDBC {
 
                 //Add cart data to queue table
                 case 7:
-                    addQueue(tableCartQueueName,tableQueue,connection.createStatement(), idQueue);
+                    addQueue(tableCartQueueName,tableQueue,connection.createStatement(), connection, idQueue, userID, paymentImage);
                     System.out.println("Cart data moved to Queue table successfully");
                     break;
 
                 //Read Queue
                 case 8:
                     readQueue(tableQueueNameRead,connection.createStatement());
+                    break;
+
+                //Delete cart
+                case 9:
+                    deleteCart(deleteCart,connection.createStatement());
+                    System.out.println("Cart deleted successfully!");
                     break;
             }
         }catch(SQLException e){
