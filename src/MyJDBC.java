@@ -219,17 +219,17 @@ public class MyJDBC {
         int quantityCartCreate = 10;
 
         //Move cart data to queue table
-        String tableCartQueueName = "acitya1833964784";
+        String tableCartQueueName = newTable;
         String tableQueue = "actqueue";
         int idQueue = 0;
-        String userID = "1833964784"; //String.valueOf(cartNumber);
+        String userID = String.valueOf(cartNumber); //String.valueOf(cartNumber);
         InputStream paymentImage = new FileInputStream("C:\\Users\\yereg\\Documents\\Coding\\Projects\\2024\\5\\JDBC CRUD functions for MySQL\\image\\backgroundsnack.png");
 
         //Read Queue
         String tableQueueNameRead = "actqueue";
 
         //Delete cart
-        String deleteCart = "acitya1833964784";
+        String deleteCart = newTable;
 
         try{
             Connection connection = DriverManager.getConnection(
